@@ -65,7 +65,7 @@
 #include "internal.h"
 
 
-int SHA1_Init(SHA_CTX *sha) {
+int SHA1_Init_AWS(SHA_CTX *sha) {
   OPENSSL_memset(sha, 0, sizeof(SHA_CTX));
   sha->h[0] = 0x67452301UL;
   sha->h[1] = 0xefcdab89UL;
@@ -77,9 +77,9 @@ int SHA1_Init(SHA_CTX *sha) {
 
 uint8_t *SHA1(const uint8_t *data, size_t len, uint8_t out[SHA_DIGEST_LENGTH]) {
   SHA_CTX ctx;
-  SHA1_Init(&ctx);
-  SHA1_Update(&ctx, data, len);
-  SHA1_Final(out, &ctx);
+  SHA1_Init_AWS(&ctx);
+  SHA1_Update_AWS(&ctx, data, len);
+  SHA1_Final_AWS(out, &ctx);
   OPENSSL_cleanse(&ctx, sizeof(ctx));
   return out;
 }
@@ -89,17 +89,17 @@ static void sha1_block_data_order(uint32_t *state, const uint8_t *data,
                                   size_t num);
 #endif
 
-void SHA1_Transform(SHA_CTX *c, const uint8_t data[SHA_CBLOCK]) {
+void SHA1_Transform_AWS(SHA_CTX *c, const uint8_t data[SHA_CBLOCK]) {
   sha1_block_data_order(c->h, data, 1);
 }
 
-int SHA1_Update(SHA_CTX *c, const void *data, size_t len) {
+int SHA1_Update_AWS(SHA_CTX *c, const void *data, size_t len) {
   crypto_md32_update(&sha1_block_data_order, c->h, c->data, SHA_CBLOCK, &c->num,
                      &c->Nh, &c->Nl, data, len);
   return 1;
 }
 
-int SHA1_Final(uint8_t out[SHA_DIGEST_LENGTH], SHA_CTX *c) {
+int SHA1_Final_AWS(uint8_t out[SHA_DIGEST_LENGTH], SHA_CTX *c) {
   crypto_md32_final(&sha1_block_data_order, c->h, c->data, SHA_CBLOCK, &c->num,
                     c->Nh, c->Nl, /*is_big_endian=*/1);
 

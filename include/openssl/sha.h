@@ -74,15 +74,15 @@ extern "C" {
 #define SHA_DIGEST_LENGTH 20
 
 // SHA1_Init initialises |sha| and returns one.
-OPENSSL_EXPORT int SHA1_Init(SHA_CTX *sha);
+OPENSSL_EXPORT int SHA1_Init_AWS(SHA_CTX *sha);
 
 // SHA1_Update adds |len| bytes from |data| to |sha| and returns one.
-OPENSSL_EXPORT int SHA1_Update(SHA_CTX *sha, const void *data, size_t len);
+OPENSSL_EXPORT int SHA1_Update_AWS(SHA_CTX *sha, const void *data, size_t len);
 
 // SHA1_Final adds the final padding to |sha| and writes the resulting digest to
 // |out|, which must have at least |SHA_DIGEST_LENGTH| bytes of space. It
 // returns one.
-OPENSSL_EXPORT int SHA1_Final(uint8_t out[SHA_DIGEST_LENGTH], SHA_CTX *sha);
+OPENSSL_EXPORT int SHA1_Final_AWS(uint8_t out[SHA_DIGEST_LENGTH], SHA_CTX *sha);
 
 // SHA1 writes the digest of |len| bytes from |data| to |out| and returns
 // |out|. There must be at least |SHA_DIGEST_LENGTH| bytes of space in
@@ -93,7 +93,7 @@ OPENSSL_EXPORT uint8_t *SHA1(const uint8_t *data, size_t len,
 // SHA1_Transform is a low-level function that performs a single, SHA-1 block
 // transformation using the state from |sha| and |SHA_CBLOCK| bytes from
 // |block|.
-OPENSSL_EXPORT void SHA1_Transform(SHA_CTX *sha,
+OPENSSL_EXPORT void SHA1_Transform_AWS(SHA_CTX *sha,
                                    const uint8_t block[SHA_CBLOCK]);
 
 struct sha_state_st {

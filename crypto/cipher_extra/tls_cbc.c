@@ -254,7 +254,7 @@ int EVP_sha1_final_with_secret_suffix(SHA_CTX *ctx,
     }
 
     // Process the block and save the hash state if it is the final value.
-    SHA1_Transform(ctx, block);
+    SHA1_Transform_AWS(ctx, block);
     for (size_t j = 0; j < 5; j++) {
       result[j] |= is_last_block & ctx->h[j];
     }
@@ -301,9 +301,9 @@ int EVP_tls_cbc_digest_record(const EVP_MD *md, uint8_t *md_out,
   }
 
   SHA_CTX ctx;
-  SHA1_Init(&ctx);
-  SHA1_Update(&ctx, hmac_pad, SHA_CBLOCK);
-  SHA1_Update(&ctx, header, 13);
+  SHA1_Init_AWS(&ctx);
+  SHA1_Update_AWS(&ctx, hmac_pad, SHA_CBLOCK);
+  SHA1_Update_AWS(&ctx, header, 13);
 
   // There are at most 256 bytes of padding, so we can compute the public
   // minimum length for |data_size|.
@@ -314,7 +314,7 @@ int EVP_tls_cbc_digest_record(const EVP_MD *md, uint8_t *md_out,
 
   // Hash the public minimum length directly. This reduces the number of blocks
   // that must be computed in constant-time.
-  SHA1_Update(&ctx, data, min_data_size);
+  SHA1_Update_AWS(&ctx, data, min_data_size);
 
   // Hash the remaining data without leaking |data_size|.
   uint8_t mac_out[SHA_DIGEST_LENGTH];
@@ -325,14 +325,14 @@ int EVP_tls_cbc_digest_record(const EVP_MD *md, uint8_t *md_out,
   }
 
   // Complete the HMAC in the standard manner.
-  SHA1_Init(&ctx);
+  SHA1_Init_AWS(&ctx);
   for (size_t i = 0; i < SHA_CBLOCK; i++) {
     hmac_pad[i] ^= 0x6a;
   }
 
-  SHA1_Update(&ctx, hmac_pad, SHA_CBLOCK);
-  SHA1_Update(&ctx, mac_out, SHA_DIGEST_LENGTH);
-  SHA1_Final(md_out, &ctx);
+  SHA1_Update_AWS(&ctx, hmac_pad, SHA_CBLOCK);
+  SHA1_Update_AWS(&ctx, mac_out, SHA_DIGEST_LENGTH);
+  SHA1_Final_AWS(md_out, &ctx);
   *md_out_size = SHA_DIGEST_LENGTH;
   return 1;
 }
